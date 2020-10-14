@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Guides
-permalink: /blog/categories/guides
-category: guides
+title: Testcategory
+permalink: /blog/categories/testcategory
+category: testcategory
 ---
  
 <h5> Posts by Category : {{ page.title }} </h5>
