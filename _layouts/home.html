@@ -1,0 +1,25 @@
+---
+layout: default
+---
+
+<script>
+        $(document).ready(function(){
+            $('#typewriteText').typewrite({
+                actions: [
+                    {type: '{{ site.author_job }}'}
+                ]
+            });
+        });
+    </script>
+
+
+<div class="col-lg-8 offset-md-2">
+  <div class="jumbotron" style="text-align: center;">
+    <img src="/assets/img/{{ site.author_logo }}" class="profile-img">
+    <h1 class="display-4">{{ site.author}}</h1>
+    <!--<h3> devlopr is a jekyll theme built for developers like you !</h3>-->
+    <p class="lead" id="typewriteText"></p>
+    <a href="/about" class="btn btn-dark btn-lg">About Me</a>
+	<a href="/blog" class="btn btn-dark btn-lg">Blog</a>
+  </div>
+</div>
