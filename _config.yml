@@ -22,6 +22,9 @@ author_email: "dmueller1607@gmail.com"
 author_location: Germany
 #author_website_url: "http://johndoe.com"
 
+author_skills_programming_languages: Java, Scala, Python, SQL
+author_skills_tools: Apache Hadoop / Spark / Kafka / HBase, Git, Windows, Linux
+
 author_work_experiences:
             - company_name: Seamless Analytics GmbH
               company_logo: seamless_analytics_logo.png
