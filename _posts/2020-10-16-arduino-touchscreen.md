@@ -11,30 +11,30 @@ thumbnail: post1_touchscreen/logo.jpg
 
 # Arduino: 2,8" Touchscreen (ILI9341)
 
-<span style="color:red">Wichtig: Der Driver für das **ILI9486** Display (3,5") wird momentan noch nicht von den unten verwendeten Libraries unterstützt!</span>
+<span style="color:red">Important: The libraries I used in this blog post won't support the driver of the **ILI9486** display (3.5") yet!</span>
 
-### 1. Libraries installieren
+### 1. Installing the Libraries
 
-Über die Arduino IDE (Menü "Sketch" > "Bibliothek einbinden" > "Bibliotheken verwalten") folgende Bibliotheken installieren:
+Install the following libraries using the Arduino IDE (Menu "Scetch" > "Include Library" > "Manage Libraries"):
 
 * Adafruit TFTLCD
 * Adafruit Touchscreen
-* (testen, ob es benötigt wird) Adafruit BusIO
-* (testen, ob es benötigt wird) Adafruit GFX
+* (optional?) Adafruit BusIO
+* (optional?) Adafruit GFX
 
-### 2. Display-Auflösung in Library konfigurieren
+### 2. Configure the Correct Display Resoultion in Library files
 
-* Im Bibliotheken-Ordner (C:\Users\Daniel\Dokumente\Arduino\libraries) folgende Änderungen für die **Adafruit TFTLCD** Bibliothek vornehmen:
+* In your library directory (defaults to C:\Users\Username\Documents\Arduino\libraries) make the following changes in the **Adafruit TFTLCD** library:
 
   * Adafruit_TFTLCD.h
-    Prüfen, ob folgende Zeile auskommentiert ist (muss auskommentiert sein):
+    Check, if following line is commented out (it must be commented out): 
 
     ``````
     //#define USE_ADAFRUIT_SHIELD_PINOUT 1
     ``````
 
   * Adafruit_TFTLCD.cpp
-    Die Zeilen mit der richtigen Displayauflösung einkommentieren, die anderen Zeilen auskommentieren:
+    Comment in the lines of code that contain the correct resolution for your touchscreen (and comment out the others):
 
     ``````c++
     //#define TFTWIDTH   320
@@ -44,9 +44,9 @@ thumbnail: post1_touchscreen/logo.jpg
     #define TFTHEIGHT 320
     ``````
 
-### 3. Am Arduino Uno anstecken
+### 3. Plug in the Touchscreen on Arduino Uno
 
-Folgendes Pin-Mapping ist für das Coding wichtig:
+The following pin mapping is important for coding later:
 
 * A4 = LCD_RST
 * A3 = LCD_CS
@@ -54,11 +54,11 @@ Folgendes Pin-Mapping ist für das Coding wichtig:
 * A1 = LCD_WR
 * A0 = LCD_RD
 
-### 4. Beispiel-Code
+### 4. Example Code
 
-Folgender Codeblock erstellt sowohl eine Instanz vom Typ **TFT** (Anzeige), als auch **Touchscreen** (Eingabe):
+Following code block creates an instance of type **TFT** (displaying) and **Touchscreen** (input):
 
-* Hinweis: Die Pins A2 und A3 werden hier doppelt belegt!
+* Hint: The pins A2 and A3 are used twice here!
 
 ``````c++
 #include <Adafruit_TFTLCD.h>     
@@ -73,11 +73,12 @@ Folgender Codeblock erstellt sowohl eine Instanz vom Typ **TFT** (Anzeige), als 
 #define LCD_RD    A0 
 
 // Pins for Touchscreen
-#define YP A2  // must be an analog pin, use "An" notation!
-#define XM A3  // must be an analog pin, use "An" notation!
+#define YP A2  // must be an analog pin
+#define XM A3  // must be an analog pin
 #define YM 8   // can be a digital pin
 #define XP 9   // can be a digital pin
 
+// Create the instances
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
@@ -88,12 +89,12 @@ void setup() {
  
   // Initialize TFT Display
   tft.reset();
-  tft.begin(0x9341);		// DAS HIER MUSS DEM DISPLAY-DRIVER ENTSPRECHEN (hier wird ILI9486 noch nicht unterstützt)
+  tft.begin(0x9341);		// This must correspond to your display driver (e.g. ILI9486 is not supported here, yet)
   tft.setRotation(1);
 }
 ``````
 
-**Beispiel: Zeichne Formen und Text das Display**
+**Example: Draw some forms and show a text on the display**
 
 ``````c++
 #define BLACK   0x0000
@@ -101,7 +102,7 @@ void setup() {
 #define WHITE   0xFFFF
 
 void setup() {
-  ... // Code von oben
+  ... // Code from above
   
   // Background
   tft.fillScreen(BLACK);
@@ -125,13 +126,13 @@ void setup() {
 }
 ``````
 
-**Beispiel: Reagiere auf Touch-Events**
+**Example: React on touch events**
 
 ``````c++
-... 							// Initialisierung von oben
+... 							// Initialization from above
 
 void setup() {
-  ... 							// Setup-Code von oben
+  ... 							// Setup-Code from above
 }
 
 void loop() {
@@ -142,32 +143,32 @@ void loop() {
     Serial.print("\tY = "); Serial.print(p.y);
     Serial.print("\tPressure = "); Serial.println(p.z); 
     
-    delay(100)					// Verhindere Prellen
+    delay(100)					// Avoid bouncing
   }
 }
 ``````
 
-**Skaliere den gedrückten Punkt auf dem Display auf eine (240 x 320 Matrix)**
+**Scale the pressed point on touchscreen to a 240 x 320 matrix**
 
 ``````c++
-... 							// Initialisierung von oben
+... 							// Initialization from above
 
-// Setze äußere Grenzwerte des Touchscreens (mithilfe des obigen Codes => ohne Skalierung)
+// Set outer limits of the touchscreen (use the code above => without scaling)
 #define TS_MINX 110
 #define TS_MINY 110
 #define TS_MAXX 960
 #define TS_MAXY 920
 
 void setup() {
-  ... 							// Setup-Code von oben
+  ... 							// Setup-Code from above
 }
 
 void loop() {
-  TSPoint p = ts.getPoint();  	//Get touch point
+  TSPoint p = ts.getPoint();  	// Get touch point
     
   if (p.z > ts.pressureThreshhold) {
     
-    // Skaliere den Wert des berührten Punkts (bei 320 x 240 pixel TFT)
+    // Scaling the value of the touched point (here for a 320 x 240 pixel TFT)
     p.x = map(p.x, TS_MINX, TS_MAXX, 0, 320);
     p.y = map(p.y, TS_MINY, TS_MAXY, 0, 240);
       
@@ -175,18 +176,18 @@ void loop() {
     Serial.print("\tY = "); Serial.print(p.y);
     Serial.print("\tPressure = "); Serial.println(p.z); 
     
-    delay(100);					// Verhindere Prellen
+    delay(100);					// Avoid bouncing
   }
 }
 ``````
 
-**Prüfung auf unterstützten Display-Typen**
+**Check for supported display types**
 
 ``````c++
 void initDisplay()
 {
   tft.reset();
-  uint16_t identifier = tft.readID();
+  uint16_t identifier = tft.readID(); 					// Read the ID of the TFT instance (this returns the driver code)
     
   if(identifier == 0x9325) {
     Serial.println(F("Found ILI9325 LCD driver"));
@@ -209,7 +210,7 @@ void initDisplay()
 }
 ``````
 
-### 5. Komplett-Beispiel: Reagiere auf Touch-Events und Schreibe auf das Display
+### 5. Complete example: React on touch events and write the position on the display
 
 ``````c++
 #include <Adafruit_TFTLCD.h>
@@ -228,12 +229,12 @@ void initDisplay()
 #define LCD_RD    A0
 
 // Pins for Touchscreen
-#define YP A2  // must be an analog pin, use "An" notation!
-#define XM A3  // must be an analog pin, use "An" notation!
+#define YP A2  // must be an analog pin
+#define XM A3  // must be an analog pin
 #define YM 8   // can be a digital pin
 #define XP 9   // can be a digital pin
 
-// Setze äußere Grenzwerte des Touchscreens (mithilfe des obigen Codes)
+// Set outer limits of the touchscreen (use the code above => without scaling)
 #define TS_MINX 110
 #define TS_MINY 110
 #define TS_MAXX 960
@@ -249,7 +250,7 @@ void setup() {
 
   // Initialize TFT Display
   tft.reset();
-  tft.begin(0x9341);    // DAS HIER MUSS DEM DISPLAY-DRIVER ENTSPRECHEN (hier wird ILI9486 noch nicht unterstützt)
+  tft.begin(0x9341);    // This must correspond to your display driver (e.g. ILI9486 is not supported here, yet)
   tft.setRotation(1);
 
   drawClickMeScreen();
@@ -260,7 +261,7 @@ void loop() {
 
   if (p.z > ts.pressureThreshhold) {
 
-    // Skaliere den Wert des berührten Punkts (bei 320 x 240 pixel TFT)
+    // Scaling the value of the touched point (here for a 320 x 240 pixel TFT)
     p.x = map(p.x, TS_MINX, TS_MAXX, 0, 320);
     p.y = map(p.y, TS_MINY, TS_MAXY, 0, 240);
 
@@ -268,7 +269,7 @@ void loop() {
     Serial.print("\tY = "); Serial.print(p.y);
     Serial.print("\tPressure = "); Serial.println(p.z);
 
-    //This is important, because the libraries are sharing pins => Switch to "Writing Mode" before Display drawing
+    // This is important, because the libraries are sharing pins => Switch to "Writing Mode" before Display drawing
     pinMode(XM, OUTPUT);
     pinMode(YP, OUTPUT);
 
@@ -282,14 +283,14 @@ void loop() {
     tft.print(String(p.x) + " / " + String(p.y));
 
     if(p.x >= 60 && p.x <= 260 && p.y >= 180 && p.y <= 220) {
-      // Was the touch inside the Button? Show info text
+      // Was the touch inside the button? => if yes, show info text
       tft.setCursor(30, 50);
       tft.setTextColor(WHITE);
       tft.setTextSize(2);
       tft.print("Button Clicked");
     }
 
-    delay(100);          // Verhindere Prellen
+    delay(100);          // Avoid bouncing
   }
 }
 
@@ -316,13 +317,16 @@ void drawClickMeScreen() {
 }
 ``````
 
-### Fehlersuche
+### Problem solving
 
-* Zeichnen und Touch-Events funktionieren nicht zusammen:
-  Hier muss geprüft werden, ob vor dem Zeichnen die beiden doppelt verwendeten Pins auf Modus "Output" gestellt wurden, ggf. ergänzen:
+* **Drawing and Touch events won't work together:**
+  Here you must check, if you set the double-used pins (A2 and A3 in the examples avove) to "output" mode before using the methods for drawing:
 
-  ``````
+  ``````c++
   //This is important, because the libraries are sharing pins => Switch to "Writing Mode" before Display drawing
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
+  
+  // Now you can draw something
+  tft.drawRect(0, 0, 319, 240, WHITE);
   ``````
