@@ -140,14 +140,17 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-
 public class Main extends Application {
-    
+
     @Override
     public void start(Stage stage) {
-        String version = System.getProperty("java.version");
-        Label l = new Label ("Hello, JavaFX 11, running on "+version);
-        Scene scene = new Scene (new StackPane(l), 300, 200);
+        String javaVersion = System.getProperty("java.runtime.version");
+        String javafxVersion = System.getProperty("javafx.runtime.version");
+        
+        Label labelVersions = new Label ("Java version: " + javaVersion + "\n" + 
+        								 "JavaFX version: " + javafxVersion);
+        
+        Scene scene = new Scene (new StackPane(labelVersions), 300, 200);
         stage.setScene(scene);
         stage.show();
     }
