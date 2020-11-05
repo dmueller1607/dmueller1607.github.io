@@ -2,7 +2,7 @@
 layout: post
 title: Arduino&#58;&nbsp;Working with the 2.8" Touchscreen Module
 author: Daniel Müller
-date: '2019-10-16'
+date: '2020-10-16'
 category: guides
 tags: arduino
 summary: Playing around with Arduino Uno and 2.8" Touchscreen Module
